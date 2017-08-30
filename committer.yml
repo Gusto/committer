@@ -1,0 +1,9 @@
+tasks:
+  - name: 'Rubocop'
+    command: bundle exec rubocop --force-exclusion
+    fix_command: bundle exec rubocop --force-exclusion -a
+  - name: 'ESLint'
+    command: yarn eslint
+    fix_command: yarn eslint-fix
+  - name: 'SCSS Lint'
+    command: yarn scsslint
