@@ -1,9 +1,10 @@
 tasks:
   - name: 'Rubocop'
-    command: sleep 5
-    fix_command: sleep 5
-  - name: 'ESLint'
-    command: sleep 2
-    fix_command: sleep 2
-  - name: 'SCSS Lint'
-    command: sleep 3
+    command: bundle exec rubocop --force-exclusion --format simple
+    fix_command: bundle exec rubocop --force-exclusion --format simple --auto-correct
+    fix_grep: '[Corrected]'
+  # - name: 'ESLint'
+  #   command: yarn eslint --
+  #   fix_command: yarn eslint-fix --
+  # - name: 'SCSS Lint'
+  #   command: sleep 3

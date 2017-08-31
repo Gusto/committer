@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gosuri/uilive"
 	"github.com/kyokomi/emoji"
+	"strings"
 	"time"
 )
 
@@ -17,7 +18,6 @@ type Reporter struct {
 func NewReporter(tasks []Task, resultChannel chan TaskResult) *Reporter {
 	return &Reporter{
 		tasks:         tasks,
-		results:       make(map[Task]TaskResult),
 		resultChannel: resultChannel,
 		doneChannel:   make(chan []TaskResult),
 	}
@@ -32,6 +32,8 @@ func (this Reporter) reportProgress() {
 	writer := uilive.New()
 	writer.Start()
 
+	results := make(map[Task]TaskResult)
+
 	// Use a ticker here
 	ticker := time.NewTicker(time.Millisecond * 50)
 
@@ -39,21 +41,21 @@ func (this Reporter) reportProgress() {
 	for range ticker.C {
 		select {
 		case result := <-this.resultChannel:
-			this.results[result.task] = result
+			results[result.task] = result
 		default:
 		}
 
 		// If there is a message on the channel, pass along the result
 		//    otherwise, continue to show the pending indicator
-		emoji.Fprintf(writer, this.generateProgressString(i))
+		emoji.Fprintf(writer, this.generateProgressString(i, results))
 
-		if len(this.results) == len(this.tasks) {
+		if len(results) == len(this.tasks) {
 			resultsArr := []TaskResult{}
-			for _, taskResult := range this.results {
+			for _, taskResult := range results {
 				resultsArr = append(resultsArr, taskResult)
 			}
-			this.doneChannel <- resultsArr
 			writer.Stop()
+			this.doneChannel <- resultsArr
 			return
 		}
 
@@ -66,12 +68,17 @@ func (this Reporter) reportFinalResults() {
 
 	var failures bool
 	for _, taskResult := range finalResults {
-		if !taskResult.result.success {
+		if !taskResult.success {
 			if !failures {
 				failures = true
 			}
 			fmt.Println("\nResults for", taskResult.task.Name)
-			fmt.Println(taskResult.result.output)
+			fmt.Println(taskResult.output)
+		}
+
+		if len(taskResult.fixedOutput) > 0 {
+			fmt.Println("Autocorrected: ")
+			fmt.Printf(strings.TrimSpace(taskResult.fixedOutput))
 		}
 	}
 
@@ -82,7 +89,7 @@ func (this Reporter) reportFinalResults() {
 	}
 }
 
-func (this Reporter) generateProgressString(tick int) string {
+func (this Reporter) generateProgressString(tick int, results map[Task]TaskResult) string {
 	var str = ""
 	for i := 0; i < len(this.tasks); i += 1 {
 		task := this.tasks[i]
@@ -101,8 +108,8 @@ func (this Reporter) generateProgressString(tick int) string {
 			":clock12:",
 		}
 		status := clockSet[tick%len(clockSet)]
-		if result, ok := this.results[task]; ok {
-			if result.result.success {
+		if result, ok := results[task]; ok {
+			if result.success {
 				status = ":white_check_mark:"
 			} else {
 				status = ":x:"
