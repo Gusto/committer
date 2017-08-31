@@ -67,8 +67,9 @@ func (this Runner) reportProgress() {
 	results := make(map[Task]*TaskResult)
 
 	// Use a ticker here
-	ticker := time.NewTicker(time.Millisecond * 500)
+	ticker := time.NewTicker(time.Millisecond * 50)
 
+	i := 0
 	for range ticker.C {
 		// Check if there is a message on the channel
 		select {
@@ -78,8 +79,8 @@ func (this Runner) reportProgress() {
 		}
 
 		// if so, update the status, if not still pending
-		fmt.Fprintf(writer, this.generateProgressString(results))
-
+		fmt.Fprintf(writer, this.generateProgressString(i, results))
+		i += 1
 		if len(results) == len(this.config.Tasks) {
 			writer.Stop()
 
@@ -89,19 +90,28 @@ func (this Runner) reportProgress() {
 	}
 }
 
-func (this Runner) generateProgressString(results map[Task]*TaskResult) string {
+const lineLength = 40
+
+func (this Runner) generateProgressString(tick int, results map[Task]*TaskResult) string {
 	var str = ""
 	for i := 0; i < len(this.config.Tasks); i += 1 {
 		task := this.config.Tasks[i]
-		status := "" // / - \ - /
+		charSet := []string{"🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛"}
+		status := charSet[tick%len(charSet)]
 		if result, ok := results[task]; ok {
 			if result.result.success {
-				status = "Completed"
+				status = "✅"
 			} else {
-				status = "Failed"
+				status = "❌"
 			}
 		}
-		str += task.Name + "...... " + status + "\n"
+
+		periods := ""
+		for j := 0; j < (lineLength - len(task.Name) - 1); j += 1 {
+			periods += "."
+		}
+
+		str += task.Name + periods + status + "\n"
 	}
 
 	return str
