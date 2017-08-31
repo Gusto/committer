@@ -1,8 +1,13 @@
 tasks:
   - name: 'Rubocop'
-    command: bundle exec rubocop --force-exclusion --format simple
-    fix_command: bundle exec rubocop --force-exclusion --format simple --auto-correct
-    fix_grep: '[Corrected]'
+    command: bundle exec rubocop  --color --force-exclusion --format simple
+    fix_command: bundle exec rubocop --color --force-exclusion --format simple --auto-correct
+    fix_grep:
+      - '[Corrected]'
+      - '=='
+    file_extensions:
+      - .rb
+      - .rake
   # - name: 'ESLint'
   #   command: yarn eslint --
   #   fix_command: yarn eslint-fix --

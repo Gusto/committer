@@ -10,7 +10,7 @@ import (
 
 type Reporter struct {
 	tasks         []Task
-	results       map[Task]TaskResult
+	results       map[string]TaskResult
 	resultChannel chan TaskResult
 	doneChannel   chan []TaskResult
 }
@@ -24,7 +24,11 @@ func NewReporter(tasks []Task, resultChannel chan TaskResult) *Reporter {
 }
 
 func (this Reporter) Report() {
-	go this.reportProgress()
+	if len(this.tasks) != 0 {
+		fmt.Println("Running commit hook for:")
+		go this.reportProgress()
+	}
+
 	this.reportFinalResults()
 }
 
@@ -32,7 +36,7 @@ func (this Reporter) reportProgress() {
 	writer := uilive.New()
 	writer.Start()
 
-	results := make(map[Task]TaskResult)
+	results := make(map[string]TaskResult)
 
 	// Use a ticker here
 	ticker := time.NewTicker(time.Millisecond * 50)
@@ -41,7 +45,7 @@ func (this Reporter) reportProgress() {
 	for range ticker.C {
 		select {
 		case result := <-this.resultChannel:
-			results[result.task] = result
+			results[result.task.Name] = result
 		default:
 		}
 
@@ -64,7 +68,11 @@ func (this Reporter) reportProgress() {
 }
 
 func (this Reporter) reportFinalResults() {
-	finalResults := <-this.doneChannel
+	var finalResults []TaskResult
+
+	if len(this.tasks) > 0 {
+		finalResults = <-this.doneChannel
+	}
 
 	var failures bool
 	for _, taskResult := range finalResults {
@@ -74,10 +82,8 @@ func (this Reporter) reportFinalResults() {
 			}
 			fmt.Println("\nResults for", taskResult.task.Name)
 			fmt.Println(taskResult.output)
-		}
-
-		if len(taskResult.fixedOutput) > 0 {
-			fmt.Println("Autocorrected: ")
+		} else if len(taskResult.fixedOutput) > 0 {
+			fmt.Println("\nAutocorrected: ")
 			fmt.Println(strings.TrimSpace(taskResult.fixedOutput))
 		}
 	}
@@ -89,7 +95,7 @@ func (this Reporter) reportFinalResults() {
 	}
 }
 
-func (this Reporter) generateProgressString(tick int, results map[Task]TaskResult) string {
+func (this Reporter) generateProgressString(tick int, results map[string]TaskResult) string {
 	var str = ""
 	for i := 0; i < len(this.tasks); i += 1 {
 		task := this.tasks[i]
@@ -108,7 +114,7 @@ func (this Reporter) generateProgressString(tick int, results map[Task]TaskResul
 			":clock12:",
 		}
 		status := clockSet[tick%len(clockSet)]
-		if result, ok := results[task]; ok {
+		if result, ok := results[task.Name]; ok {
 			if result.success {
 				status = ":white_check_mark:"
 			} else {

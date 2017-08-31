@@ -1,7 +1,5 @@
 package core
 
-import "fmt"
-
 type Runner struct {
 	config        Config
 	fix           bool
@@ -19,18 +17,22 @@ func NewRunner(config Config, fix bool, changed bool) *Runner {
 }
 
 func (this Runner) Run() {
-	fmt.Println("Running commit hook for:")
+	var tasksToRun []Task
 
 	for i := 0; i < len(this.config.Tasks); i += 1 {
-		go this.processTask(this.config.Tasks[i])
+		task := this.config.Tasks[i]
+		if task.shouldRun(this.changed) {
+			tasksToRun = append(tasksToRun, task)
+			go this.processTask(task)
+		}
 	}
 
 	NewReporter(
-		this.config.Tasks,
+		tasksToRun,
 		this.resultChannel,
 	).Report()
 }
 
 func (this Runner) processTask(task Task) {
-	this.resultChannel <- task.Execute(this.fix, this.changed)
+	this.resultChannel <- task.Execute(this.changed, this.fix)
 }
