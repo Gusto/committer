@@ -8,8 +8,8 @@ import (
 )
 
 type Task struct {
-	Name       string
-	Command    string
+	Name       string `yaml:"name"`
+	Command    string `yaml:"command"`
 	FixCommand string `yaml:"fix_command"`
 }
 type Config struct {

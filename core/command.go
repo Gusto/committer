@@ -27,6 +27,7 @@ func (cmd Cmd) Execute() *CmdResult {
 
 	output, err := exeCommand.CombinedOutput()
 
+	// Return a CmdResult object
 	return &CmdResult{
 		cmd:     cmd,
 		output:  string(output),
