@@ -27,7 +27,7 @@ func main() {
 		return
 	}
 
-	core.Run(parsedConfig, *fix)
+	core.NewRunner(parsedConfig, *fix).Run()
 	// var wg sync.WaitGroup
 	// logger := log.New(os.Stdout, "", 0)
 	//

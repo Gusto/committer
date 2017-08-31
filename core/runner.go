@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"github.com/gosuri/uilive"
-	"sync"
 	"time"
 )
 
@@ -12,65 +11,60 @@ type TaskResult struct {
 	result *CmdResult
 }
 
-func Run(config *Config, fix bool) {
-	var wg sync.WaitGroup
+type Runner struct {
+	config        *Config
+	fix           bool
+	resultChannel chan TaskResult
+	doneChannel   chan map[Task]*TaskResult
+}
 
-	var resultsMutex = &sync.Mutex{}
-	var results []TaskResult
-
-	var doneChannel = make(chan TaskResult)
-
-	wg.Add(1)
-	go generateProgress(config.Tasks, doneChannel, &wg)
-
-	for i := 0; i < len(config.Tasks); i += 1 {
-		// copyi := i
-		task := config.Tasks[i]
-		wg.Add(1)
-		go func() {
-			// Use the FixCommand or regular Command depending on the flag passed to CLI
-			cmdStr := task.Command
-			if fix && task.FixCommand != "" {
-				cmdStr = task.FixCommand
-			}
-
-			// Execute command
-			result := NewCmd(cmdStr).Execute()
-
-			// Update the results array
-			resultsMutex.Lock()
-			defer resultsMutex.Unlock()
-			// fmt.Println("Appending: %v", task.Name)
-			taskResult := &TaskResult{
-				task:   &task,
-				result: result,
-			}
-			results = append(results, *taskResult)
-			doneChannel <- *taskResult
-			// Mark the action complete
-			wg.Done()
-		}()
+func NewRunner(config *Config, fix bool) *Runner {
+	return &Runner{
+		config:        config,
+		fix:           fix,
+		resultChannel: make(chan TaskResult),
+		doneChannel:   make(chan map[Task]*TaskResult),
 	}
+}
 
-	// Wait for all commands to complete
-	wg.Wait()
+func (this Runner) Run() {
+	for i := 0; i < len(this.config.Tasks); i += 1 {
+		go this.processTask(this.config.Tasks[i])
+	}
+	go this.reportProgress()
 
+	finalResults := <-this.doneChannel
 	// Report
-	for i := 0; i < len(results); i += 1 {
-		taskResult := results[i]
-
+	for _, taskResult := range finalResults {
 		fmt.Println("\nResults for", taskResult.task.Name)
 		fmt.Println("success? %v", taskResult.result.success)
 		fmt.Println(taskResult.result.output)
 	}
 }
 
-func generateProgress(tasks []Task, doneChannel chan TaskResult, wg *sync.WaitGroup) {
+func (this Runner) processTask(task Task) {
+	// Use the FixCommand or regular Command depending on the flag passed to CLI
+	cmdStr := task.Command
+
+	if this.fix && task.FixCommand != "" {
+		cmdStr = task.FixCommand
+	}
+
+	// Execute command
+	result := NewCmd(cmdStr).Execute()
+
+	this.resultChannel <- TaskResult{
+		task:   &task,
+		result: result,
+	}
+}
+
+func (this Runner) reportProgress() {
 	writer := uilive.New()
 	writer.Start()
 
 	// Define a map of task_name => TaskResult
-	results := make(map[Task]TaskResult)
+	results := make(map[Task]*TaskResult)
 
 	// Use a ticker here
 	ticker := time.NewTicker(time.Millisecond * 500)
@@ -78,34 +72,37 @@ func generateProgress(tasks []Task, doneChannel chan TaskResult, wg *sync.WaitGr
 	for range ticker.C {
 		// Check if there is a message on the channel
 		select {
-		case result := <-doneChannel:
-			// fmt.Println("received message", result)
-			results[*result.task] = result
+		case result := <-this.resultChannel:
+			results[*result.task] = &result
 		default:
-			// fmt.Println("no message received")
 		}
 
-		var str = ""
-		for i := 0; i < len(tasks); i += 1 {
-			task := tasks[i]
-			status := "" // / - \ - /
-			if result, ok := results[task]; ok {
-				if result.result.success {
-					status = "Completed"
-				} else {
-					status = "Failed"
-				}
-			}
-			str += task.Name + "...... " + status + "\n"
-		}
 		// if so, update the status, if not still pending
-		fmt.Fprintf(writer, str)
+		fmt.Fprintf(writer, this.generateProgressString(results))
 
-		if len(results) == len(tasks) {
+		if len(results) == len(this.config.Tasks) {
 			writer.Stop()
-			wg.Done()
-			// close(doneChannel)
+
+			this.doneChannel <- results
 			return
 		}
 	}
+}
+
+func (this Runner) generateProgressString(results map[Task]*TaskResult) string {
+	var str = ""
+	for i := 0; i < len(this.config.Tasks); i += 1 {
+		task := this.config.Tasks[i]
+		status := "" // / - \ - /
+		if result, ok := results[task]; ok {
+			if result.result.success {
+				status = "Completed"
+			} else {
+				status = "Failed"
+			}
+		}
+		str += task.Name + "...... " + status + "\n"
+	}
+
+	return str
 }
