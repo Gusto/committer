@@ -73,12 +73,12 @@ func (this Reporter) reportFinalResults() {
 				failures = true
 			}
 			fmt.Println("\nResults for", taskResult.task.Name)
-			fmt.Println(taskResult.output)
+			fmt.Println(taskResult.output + "\n")
 		}
 
 		if len(taskResult.fixedOutput) > 0 {
 			fmt.Println("Autocorrected: ")
-			fmt.Printf(strings.TrimSpace(taskResult.fixedOutput))
+			fmt.Println(strings.TrimSpace(taskResult.fixedOutput) + "\n")
 		}
 	}
 
