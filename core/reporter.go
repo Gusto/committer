@@ -9,15 +9,17 @@ import (
 
 type Reporter struct {
 	tasks         []Task
+	results       map[Task]TaskResult
 	resultChannel chan TaskResult
-	doneChannel   chan map[Task]TaskResult
+	doneChannel   chan []TaskResult
 }
 
-func NewReporter(tasks []Task, resultChannel chan TaskResult, doneChannel chan map[Task]TaskResult) *Reporter {
+func NewReporter(tasks []Task, resultChannel chan TaskResult) *Reporter {
 	return &Reporter{
 		tasks:         tasks,
+		results:       make(map[Task]TaskResult),
 		resultChannel: resultChannel,
-		doneChannel:   doneChannel,
+		doneChannel:   make(chan []TaskResult),
 	}
 }
 
@@ -30,9 +32,6 @@ func (this Reporter) reportProgress() {
 	writer := uilive.New()
 	writer.Start()
 
-	// Define a map of Task => TaskResult
-	results := make(map[Task]TaskResult)
-
 	// Use a ticker here
 	ticker := time.NewTicker(time.Millisecond * 50)
 
@@ -40,17 +39,21 @@ func (this Reporter) reportProgress() {
 	for range ticker.C {
 		select {
 		case result := <-this.resultChannel:
-			results[result.task] = result
+			this.results[result.task] = result
 		default:
 		}
 
 		// If there is a message on the channel, pass along the result
 		//    otherwise, continue to show the pending indicator
-		emoji.Fprintf(writer, this.generateProgressString(i, results))
+		emoji.Fprintf(writer, this.generateProgressString(i))
 
-		if len(results) == len(this.tasks) {
+		if len(this.results) == len(this.tasks) {
+			resultsArr := make([]TaskResult, len(this.results))
+			for _, taskResult := range this.results {
+				resultsArr = append(resultsArr, taskResult)
+			}
+			this.doneChannel <- resultsArr
 			writer.Stop()
-			this.doneChannel <- results
 			return
 		}
 
@@ -79,7 +82,7 @@ func (this Reporter) reportFinalResults() {
 	}
 }
 
-func (this Reporter) generateProgressString(tick int, results map[Task]TaskResult) string {
+func (this Reporter) generateProgressString(tick int) string {
 	var str = ""
 	for i := 0; i < len(this.tasks); i += 1 {
 		task := this.tasks[i]
@@ -98,7 +101,7 @@ func (this Reporter) generateProgressString(tick int, results map[Task]TaskResul
 			":clock12:",
 		}
 		status := clockSet[tick%len(clockSet)]
-		if result, ok := results[task]; ok {
+		if result, ok := this.results[task]; ok {
 			if result.result.success {
 				status = ":white_check_mark:"
 			} else {

@@ -12,7 +12,6 @@ type Runner struct {
 	fix           bool
 	changed       bool
 	resultChannel chan TaskResult
-	doneChannel   chan map[Task]TaskResult
 }
 
 func NewRunner(config Config, fix bool, changed bool) *Runner {
@@ -21,7 +20,6 @@ func NewRunner(config Config, fix bool, changed bool) *Runner {
 		fix:           fix,
 		changed:       changed,
 		resultChannel: make(chan TaskResult),
-		doneChannel:   make(chan map[Task]TaskResult),
 	}
 }
 
@@ -35,7 +33,6 @@ func (this Runner) Run() {
 	NewReporter(
 		this.config.Tasks,
 		this.resultChannel,
-		this.doneChannel,
 	).Report()
 }
 
