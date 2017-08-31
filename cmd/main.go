@@ -12,7 +12,7 @@ import (
 func main() {
 	help := flag.Bool("help", false, "Display usage")
 	fix := flag.Bool("fix", false, "Run autocorrect for commands that support it")
-	config := flag.String("config", "committer.yml", "Location of your config file")
+	configPath := flag.String("config", "committer.yml", "Location of your config file")
 
 	flag.Parse()
 
@@ -22,12 +22,12 @@ func main() {
 		return
 	}
 
-	parsedConfig, err := core.NewConfig(*config)
+	parsedConfig, err := core.NewConfig(*configPath)
 	if err != nil {
 		return
 	}
 
-	core.NewRunner(parsedConfig, *fix).Run()
+	core.NewRunner(*parsedConfig, *fix).Run()
 	// var wg sync.WaitGroup
 	// logger := log.New(os.Stdout, "", 0)
 	//

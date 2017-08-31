@@ -7,23 +7,23 @@ import (
 )
 
 type TaskResult struct {
-	task   *Task
-	result *CmdResult
+	task   Task
+	result CmdResult
 }
 
 type Runner struct {
-	config        *Config
+	config        Config
 	fix           bool
 	resultChannel chan TaskResult
-	doneChannel   chan map[Task]*TaskResult
+	doneChannel   chan map[Task]TaskResult
 }
 
-func NewRunner(config *Config, fix bool) *Runner {
+func NewRunner(config Config, fix bool) *Runner {
 	return &Runner{
 		config:        config,
 		fix:           fix,
 		resultChannel: make(chan TaskResult),
-		doneChannel:   make(chan map[Task]*TaskResult),
+		doneChannel:   make(chan map[Task]TaskResult),
 	}
 }
 
@@ -54,7 +54,7 @@ func (this Runner) processTask(task Task) {
 	result := NewCmd(cmdStr).Execute()
 
 	this.resultChannel <- TaskResult{
-		task:   &task,
+		task:   task,
 		result: result,
 	}
 }
@@ -64,7 +64,7 @@ func (this Runner) reportProgress() {
 	writer.Start()
 
 	// Define a map of task_name => TaskResult
-	results := make(map[Task]*TaskResult)
+	results := make(map[Task]TaskResult)
 
 	// Use a ticker here
 	ticker := time.NewTicker(time.Millisecond * 50)
@@ -74,7 +74,7 @@ func (this Runner) reportProgress() {
 		// Check if there is a message on the channel
 		select {
 		case result := <-this.resultChannel:
-			results[*result.task] = &result
+			results[result.task] = result
 		default:
 		}
 
@@ -90,9 +90,7 @@ func (this Runner) reportProgress() {
 	}
 }
 
-const lineLength = 40
-
-func (this Runner) generateProgressString(tick int, results map[Task]*TaskResult) string {
+func (this Runner) generateProgressString(tick int, results map[Task]TaskResult) string {
 	var str = ""
 	for i := 0; i < len(this.config.Tasks); i += 1 {
 		task := this.config.Tasks[i]
@@ -106,12 +104,7 @@ func (this Runner) generateProgressString(tick int, results map[Task]*TaskResult
 			}
 		}
 
-		periods := ""
-		for j := 0; j < (lineLength - len(task.Name) - 1); j += 1 {
-			periods += "."
-		}
-
-		str += task.Name + periods + status + "\n"
+		str += status + "  " + task.Name + "\n"
 	}
 
 	return str
