@@ -48,7 +48,7 @@ func (this Reporter) reportProgress() {
 		emoji.Fprintf(writer, this.generateProgressString(i))
 
 		if len(this.results) == len(this.tasks) {
-			resultsArr := make([]TaskResult, len(this.results))
+			resultsArr := []TaskResult{}
 			for _, taskResult := range this.results {
 				resultsArr = append(resultsArr, taskResult)
 			}
