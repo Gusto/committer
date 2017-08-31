@@ -12,6 +12,7 @@ type Task struct {
 	Command    string `yaml:"command"`
 	FixCommand string `yaml:"fix_command"`
 }
+
 type Config struct {
 	Tasks []Task
 }

@@ -1,9 +1,9 @@
 tasks:
   - name: 'Rubocop'
-    command: sleep 2
-    fix_command: sleep 2
+    command: echo
+    fix_command: echo
   - name: 'ESLint'
-    command: sleep 5
-    fix_command: sleep 5
+    command: echo
+    fix_command: echo
   - name: 'SCSS Lint'
-    command: sleep 3
+    command: echo

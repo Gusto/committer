@@ -23,8 +23,8 @@ func NewCmd(command string) *Cmd {
 
 func (cmd Cmd) Execute() CmdResult {
 	command := strings.Split(cmd.Command, " ")
-	exeCommand := exec.Command(command[0], command[1:]...)
 
+	exeCommand := exec.Command(command[0], command[1:]...)
 	output, err := exeCommand.CombinedOutput()
 
 	// Return a CmdResult object

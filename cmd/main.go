@@ -4,14 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"github.com/nikhilmat/committer/core"
-	// "log"
 	"os"
-	// "sync"
 )
 
 func main() {
 	help := flag.Bool("help", false, "Display usage")
 	fix := flag.Bool("fix", false, "Run autocorrect for commands that support it")
+	changed := flag.Bool("changed", false, "Run autocorrect for commands that support it")
 	configPath := flag.String("config", "committer.yml", "Location of your config file")
 
 	flag.Parse()
@@ -27,7 +26,7 @@ func main() {
 		return
 	}
 
-	core.NewRunner(*parsedConfig, *fix).Run()
+	core.NewRunner(*parsedConfig, *fix, *changed).Run()
 	// var wg sync.WaitGroup
 	// logger := log.New(os.Stdout, "", 0)
 	//
