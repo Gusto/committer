@@ -73,19 +73,19 @@ func (this Reporter) reportFinalResults() {
 				failures = true
 			}
 			fmt.Println("\nResults for", taskResult.task.Name)
-			fmt.Println(taskResult.output + "\n")
+			fmt.Println(taskResult.output)
 		}
 
 		if len(taskResult.fixedOutput) > 0 {
 			fmt.Println("Autocorrected: ")
-			fmt.Println(strings.TrimSpace(taskResult.fixedOutput) + "\n")
+			fmt.Println(strings.TrimSpace(taskResult.fixedOutput))
 		}
 	}
 
 	if failures {
-		emoji.Println(":x: Finished pre-commit hook")
+		emoji.Println("\n:x: Finished pre-commit hook")
 	} else {
-		emoji.Println(":white_check_mark: Finished pre-commit hook")
+		emoji.Println("\n:white_check_mark: Finished pre-commit hook")
 	}
 }
 

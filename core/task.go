@@ -32,7 +32,7 @@ func (task Task) Execute(fix bool, changed bool) TaskResult {
 
 	// Feed in changed files if we are running with --changed
 	changedFiles, err := exec.Command("git", "diff", "--cached", "--name-only").Output()
-	changedStr := strings.TrimSpace(string(changedFiles))
+	changedStr := strings.Join(strings.Split(string(changedFiles), "\n"), " ")
 	if changed {
 		if err != nil {
 			panic(err)
