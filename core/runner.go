@@ -1,5 +1,7 @@
 package core
 
+import "os"
+
 type Runner struct {
 	config        Config
 	fix           bool
@@ -27,10 +29,16 @@ func (this Runner) Run() {
 		}
 	}
 
-	NewReporter(
+	success := NewReporter(
 		tasksToRun,
 		this.resultChannel,
 	).Report()
+
+	if success {
+		os.Exit(0)
+	} else {
+		os.Exit(1)
+	}
 }
 
 func (this Runner) processTask(task Task) {

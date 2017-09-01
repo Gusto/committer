@@ -23,13 +23,13 @@ func NewReporter(tasks []Task, resultChannel chan TaskResult) *Reporter {
 	}
 }
 
-func (this Reporter) Report() {
+func (this Reporter) Report() bool {
 	if len(this.tasks) != 0 {
 		fmt.Println("Running commit hook for:")
 		go this.reportProgress()
 	}
 
-	this.reportFinalResults()
+	return this.reportFinalResults()
 }
 
 func (this Reporter) reportProgress() {
@@ -67,7 +67,7 @@ func (this Reporter) reportProgress() {
 	}
 }
 
-func (this Reporter) reportFinalResults() {
+func (this Reporter) reportFinalResults() bool {
 	var finalResults []TaskResult
 
 	if len(this.tasks) > 0 {
@@ -90,8 +90,10 @@ func (this Reporter) reportFinalResults() {
 
 	if failures {
 		emoji.Println("\n:x: Finished pre-commit hook")
+		return false
 	} else {
 		emoji.Println("\n:white_check_mark: Finished pre-commit hook")
+		return true
 	}
 }
 

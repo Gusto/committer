@@ -27,18 +27,4 @@ func main() {
 	}
 
 	core.NewRunner(*parsedConfig, *fix, *changed).Run()
-	// var wg sync.WaitGroup
-	// logger := log.New(os.Stdout, "", 0)
-	//
-	// cmd := core.NewCmd("bundle exec rubocop app/models/company.rb")
-	//
-	// wg.Add(1)
-	// go func() {
-	// 	defer wg.Done()
-	// 	logger.Print("Running: ", cmd.Command)
-	// 	output, _ := cmd.Execute().Output()
-	// 	fmt.Println(string(output))
-	// }()
-	//
-	// wg.Wait()
 }
