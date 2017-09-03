@@ -21,7 +21,7 @@ func main() {
 		return
 	}
 
-	parsedConfig, err := core.NewConfig(*configPath)
+	parsedConfig, err := core.NewConfigFromFile(*configPath)
 	if err != nil {
 		return
 	}

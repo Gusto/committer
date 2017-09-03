@@ -83,7 +83,7 @@ func (this Reporter) reportFinalResults() bool {
 			fmt.Println("\nResults for", taskResult.task.Name)
 			fmt.Println(taskResult.output)
 		} else if len(taskResult.fixedOutput) > 0 {
-			fmt.Println("\nAutocorrected: ")
+			fmt.Println("\n", taskResult.task.Name, "autocorrected: ")
 			fmt.Println(strings.TrimSpace(taskResult.fixedOutput))
 		}
 	}

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -11,12 +12,11 @@ type Config struct {
 	Tasks []Task
 }
 
-func NewConfig(filename string) (*Config, error) {
+func NewConfigFromFile(filename string) (*Config, error) {
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-	config := Config{}
 
 	yamlLocation := dir + "/" + filename
 	yamlFile, err := ioutil.ReadFile(yamlLocation)
@@ -25,11 +25,45 @@ func NewConfig(filename string) (*Config, error) {
 		return nil, err
 	}
 
-	err = yaml.Unmarshal(yamlFile, &config)
-	if err != nil {
-		log.Fatalf("Error parsing YAML from %v: %v", yamlLocation, err)
+	return NewConfig(yamlFile)
+}
+
+func NewConfig(content []byte) (*Config, error) {
+	config := Config{}
+
+	if err := yaml.Unmarshal(content, &config); err != nil {
+		log.Printf("Error parsing YAML %v", err)
 		return nil, err
 	}
 
-	return &config, nil
+	return ValidateConfig(&config)
+}
+
+func ValidateConfig(config *Config) (*Config, error) {
+	if len(config.Tasks) == 0 {
+		return nil, errors.New("There must be a tasks array present in the config file.")
+
+	}
+
+	for _, task := range config.Tasks {
+		if task.Name == "" {
+			return nil, errors.New("All tasks must have a \"name\" key.")
+		}
+
+		if task.Command == "" {
+			return nil, errors.New("All tasks must have a \"command\" key.")
+		}
+
+		if task.Fix.Command != "" {
+			if len(task.Fix.Output) == 0 {
+				return nil, errors.New("All tasks with a \"fix_command\" must specify a \"fix_grep\" list to show the autocorrect output.")
+			}
+
+			if len(task.Fix.Files) == 0 {
+				return nil, errors.New("All tasks with a \"fix_command\" must specify a \"file_extensions\" list to determine if it should be run on change.")
+			}
+		}
+	}
+
+	return config, nil
 }
