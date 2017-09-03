@@ -24,7 +24,7 @@ type TaskResult struct {
 	fixedOutput string
 }
 
-var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE_FIX") == "")
+var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE") == "")
 
 var changedFiles, _ = exec.Command("git", "diff", "--cached", "--name-only").Output()
 var changedFilesList = strings.Split(string(changedFiles), "\n")
