@@ -1,13 +1,13 @@
 tasks:
   - name: Rubocop
     command: bundle exec rubocop  --color --force-exclusion --format simple
+    files: '\.rb|\.rake'
     fix:
       command: bundle exec rubocop --color --force-exclusion --format simple --auto-correct
       output: '\[Corrected\]|=='
-      files: '\.rb|\.rake'
   - name: 'ESLint'
     command: yarn eslint --
+    files: '\.js|\.jsx'
     fix:
       command: yarn eslint-fix-verbose -- --fix
       output: 'Generating fixed text for'
-      files: '\.js|\.jsx'

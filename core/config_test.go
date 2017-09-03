@@ -10,14 +10,15 @@ func TestValidYamlString(t *testing.T) {
 tasks:
   - name: 'SCSS Lint'
     command: yarn scss-lint
+    files: ".scss"
 `)
 
 	config, err := NewConfig(data)
 
+	assert.Nil(t, err, "The error should not be present.")
 	assert.Equal(t, len(config.Tasks), 1, "There should only be one task.")
 	assert.Equal(t, config.Tasks[0].Name, "SCSS Lint", "The name should be set correctly")
 	assert.Equal(t, config.Tasks[0].Command, "yarn scss-lint", "The command should be set correctly")
-	assert.Nil(t, err, "The error should not be present.")
 }
 
 func TestInvalidYamlString(t *testing.T) {
@@ -61,10 +62,10 @@ func TestCompleteYaml(t *testing.T) {
 tasks:
   - name: 'SCSS Lint'
     command: yarn scss-lint
+    files: '\.scss|\.css'
     fix:
       command: yarn scss-lint-fix
       output: Completed
-      files: '\.scss|\.css'
 `)
 
 	config, err := NewConfig(data)
@@ -91,10 +92,10 @@ func TestNamelessCommandYaml(t *testing.T) {
 tasks:
   -
     command: yarn scss-lint
+    files: '\.scss|\.css'
     fix:
       command: yarn scss-lint-fix
       output: Completed
-      files: '\.scss|\.css'
 `)
 
 	_, err := NewConfig(data)
@@ -107,10 +108,10 @@ func TestCommandlessYaml(t *testing.T) {
 tasks:
   -
     name: 'SCSS Lint'
+    files: '\.scss|\.css'
     fix:
       command: yarn scss-lint-fix
       output: Completed
-      files: '\.scss|\.css'
 `)
 
 	_, err := NewConfig(data)
@@ -124,9 +125,9 @@ tasks:
   -
     name: 'SCSS Lint'
     command: yarn scss-lint
+    files: '\.scss|\.css'
     fix:
       command: yarn scss-lint-fix
-      files: '\.scss|\.css'
 `)
 
 	_, err := NewConfig(data)

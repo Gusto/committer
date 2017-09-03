@@ -10,10 +10,10 @@ import (
 type Task struct {
 	Name    string
 	Command string
+	Files   string
 	Fix     struct {
 		Command string
 		Output  string
-		Files   string
 	}
 }
 
@@ -25,6 +25,7 @@ type TaskResult struct {
 }
 
 var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE_FIX") == "")
+
 var changedFiles, _ = exec.Command("git", "diff", "--cached", "--name-only").Output()
 var changedFilesList = strings.Split(string(changedFiles), "\n")
 
@@ -32,7 +33,7 @@ func (task Task) relevantChangedFiles(changedFilesList []string) []string {
 	var relevantChangedFilesList []string
 
 	for _, file := range changedFilesList {
-		match, _ := regexp.MatchString(task.Fix.Files, file)
+		match, _ := regexp.MatchString(task.Files, file)
 		if match {
 			relevantChangedFilesList = append(relevantChangedFilesList, file)
 		}
@@ -41,19 +42,23 @@ func (task Task) relevantChangedFiles(changedFilesList []string) []string {
 	return relevantChangedFilesList
 }
 
+var execCommand = func(command string, args ...string) ([]byte, error) {
+	return exec.Command(command, args...).CombinedOutput()
+}
+
 func (task Task) Execute(changed bool, fix bool) TaskResult {
 	// Generate command based on --fix / --changed
 	command := task.prepareCommand(changed, fix)
 
 	// Run command
-	exeCommand := exec.Command(command[0], command[1:]...)
-	output, err := exeCommand.CombinedOutput()
+	output, err := execCommand(command[0], command[1:]...)
 
 	outputStr := string(output)
 	success := err == nil
 
 	var fixedOutput string
-	if fix && success {
+	shouldFix := fix && task.Fix.Command != ""
+	if success && shouldFix {
 		// If we are fixing and successfully updated files, capture the output
 		fixedOutput = task.prepareFixedOutput(outputStr)
 
@@ -115,7 +120,7 @@ func (task Task) stageRelevantFiles() {
 	relevantChangedFiles := task.relevantChangedFiles(changedFilesList)
 	subCmd := append([]string{"add"}, relevantChangedFiles...)
 
-	if _, err := exec.Command("git", subCmd...).Output(); err != nil {
+	if _, err := execCommand("git", subCmd...); err != nil {
 		panic(err)
 	}
 }
@@ -128,7 +133,7 @@ func (task Task) shouldRun(changed bool) bool {
 
 	if task.Fix.Command != "" {
 		for _, file := range changedFilesList {
-			match, err := regexp.MatchString(task.Fix.Files, file)
+			match, err := regexp.MatchString(task.Files, file)
 
 			if err != nil {
 				panic(err)

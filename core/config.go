@@ -54,13 +54,13 @@ func ValidateConfig(config *Config) (*Config, error) {
 			return nil, errors.New("All tasks must have a \"command\" key.")
 		}
 
+		if task.Files == "" {
+			return nil, errors.New("All tasks must specify a \"files\" regex to determine if it should be run.")
+		}
+
 		if task.Fix.Command != "" {
 			if task.Fix.Output == "" {
 				return nil, errors.New("All tasks with a \"fix.command\" must specify a \"fix.output\" regex to show the autocorrect output.")
-			}
-
-			if task.Fix.Files == "" {
-				return nil, errors.New("All tasks with a \"fix.command\" must specify a \"fix.files\" regex to determine if it should be run on change.")
 			}
 		}
 	}

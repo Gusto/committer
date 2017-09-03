@@ -1,3 +1,4 @@
 tasks:
   - name: 'SCSS Lint'
     command: yarn scss-lint
+    files: '\.scss'
