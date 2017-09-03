@@ -12,6 +12,6 @@ else
   go install
 
   mv /go/bin/committer /go/bin/committer-$VERSION
-  aws s3 cp /go/bin/committer s3://vpc-access/
+  aws s3 cp /go/bin/committer-$VERSION s3://vpc-access/
   echo "Uploaded Committer@${VERSION} to vpc-access S3 bucket!"
 fi
