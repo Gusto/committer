@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-type TaskFix struct {
-}
 type Task struct {
 	Name    string
 	Command string
@@ -30,7 +28,71 @@ var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE_FIX") == "")
 var changedFiles, _ = exec.Command("git", "diff", "--cached", "--name-only").Output()
 var changedFilesList = strings.Split(string(changedFiles), "\n")
 
+func (task Task) relevantChangedFiles(changedFilesList []string) []string {
+	var relevantChangedFilesList []string
+
+	for _, file := range changedFilesList {
+		match, _ := regexp.MatchString(task.Fix.Files, file)
+		if match {
+			relevantChangedFilesList = append(relevantChangedFilesList, file)
+		}
+	}
+
+	return relevantChangedFilesList
+}
+
 func (task Task) Execute(changed bool, fix bool) TaskResult {
+	// Generate command based on --fix / --changed
+	command := task.prepareCommand(changed, fix)
+
+	// Run command
+	exeCommand := exec.Command(command[0], command[1:]...)
+	output, err := exeCommand.CombinedOutput()
+
+	outputStr := string(output)
+	success := err == nil
+
+	var fixedOutput string
+	if fix && success {
+		// If we are fixing and successfully updated files, capture the output
+		fixedOutput = task.prepareFixedOutput(outputStr)
+
+		if fixedOutput != "" {
+			// If we have output, then we've corrected files
+			if shouldStage {
+				// Stage files by default automatically
+				task.stageRelevantFiles()
+			} else {
+				// Explicitly fail the pre-commit hook so the files can be staged manually
+				success = false
+			}
+		}
+	}
+
+	return TaskResult{
+		task:        task,
+		success:     success,
+		output:      outputStr,
+		fixedOutput: fixedOutput,
+	}
+}
+
+func (task Task) prepareFixedOutput(outputStr string) string {
+	var fixedOutputList []string
+
+	for _, item := range strings.Split(outputStr, "\n") {
+		match, _ := regexp.MatchString(task.Fix.Output, item)
+
+		if match {
+			fixedOutputList = append(fixedOutputList, item)
+			continue
+		}
+	}
+
+	return strings.Join(fixedOutputList, "\n")
+}
+
+func (task Task) prepareCommand(changed bool, fix bool) []string {
 	// Use the FixCommand or regular Command depending on the flag passed to CLI
 	var cmdStr string
 	if fix && task.Fix.Command != "" {
@@ -40,64 +102,21 @@ func (task Task) Execute(changed bool, fix bool) TaskResult {
 	}
 
 	// Feed in changed files if we are running with --changed
-	var changedStr string
-	var relevantChangedFilesList []string
 
 	if changed {
-		for _, file := range changedFilesList {
-			match, _ := regexp.MatchString(task.Fix.Files, file)
-			if match {
-				relevantChangedFilesList = append(relevantChangedFilesList, file)
-			}
-		}
-
-		changedStr = strings.Join(relevantChangedFilesList, " ")
-		cmdStr += " -- " + changedStr
+		relevantChangedFilesList := task.relevantChangedFiles(changedFilesList)
+		cmdStr += " -- " + strings.Join(relevantChangedFilesList, " ")
 	}
 
-	// Execute command
-	command := strings.Split(cmdStr, " ")
-	exeCommand := exec.Command(command[0], command[1:]...)
-	output, err := exeCommand.CombinedOutput()
+	return strings.Split(cmdStr, " ")
+}
 
-	outputStr := string(output)
-	success := err == nil
+func (task Task) stageRelevantFiles() {
+	relevantChangedFiles := task.relevantChangedFiles(changedFilesList)
+	subCmd := append([]string{"add"}, relevantChangedFiles...)
 
-	// Handle autocorrect parsing here
-	var fixedOutputList []string
-	if fix && success {
-
-	Strings:
-		for _, item := range strings.Split(outputStr, "\n") {
-			match, _ := regexp.MatchString(task.Fix.Output, item)
-
-			if match {
-				fixedOutputList = append(fixedOutputList, item)
-				continue Strings
-			}
-		}
-
-		if len(fixedOutputList) > 0 {
-			if shouldStage {
-				subCmd := append([]string{"add"}, relevantChangedFilesList...)
-
-				if _, err := exec.Command("git", subCmd...).Output(); err != nil {
-					panic(err)
-				}
-			} else {
-				// Explicitly mark autocorrects that were not stage as unsuccessful
-				//   so they can be staged manually
-				success = false
-			}
-		}
-	}
-
-	// Return a CmdResult object
-	return TaskResult{
-		task:        task,
-		output:      outputStr,
-		success:     success,
-		fixedOutput: strings.Join(fixedOutputList, "\n"),
+	if _, err := exec.Command("git", subCmd...).Output(); err != nil {
+		panic(err)
 	}
 }
 

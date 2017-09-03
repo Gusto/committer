@@ -55,12 +55,12 @@ func ValidateConfig(config *Config) (*Config, error) {
 		}
 
 		if task.Fix.Command != "" {
-			if len(task.Fix.Output) == 0 {
-				return nil, errors.New("All tasks with a \"fix_command\" must specify a \"fix_grep\" list to show the autocorrect output.")
+			if task.Fix.Output == "" {
+				return nil, errors.New("All tasks with a \"fix.command\" must specify a \"fix.output\" regex to show the autocorrect output.")
 			}
 
-			if len(task.Fix.Files) == 0 {
-				return nil, errors.New("All tasks with a \"fix_command\" must specify a \"file_extensions\" list to determine if it should be run on change.")
+			if task.Fix.Files == "" {
+				return nil, errors.New("All tasks with a \"fix.command\" must specify a \"fix.files\" regex to determine if it should be run on change.")
 			}
 		}
 	}

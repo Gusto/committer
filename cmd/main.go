@@ -26,5 +26,11 @@ func main() {
 		return
 	}
 
-	core.NewRunner(*parsedConfig, *fix, *changed).Run()
+	success := core.NewRunner(*parsedConfig, *fix, *changed).Run()
+
+	if success {
+		os.Exit(0)
+	} else {
+		os.Exit(1)
+	}
 }

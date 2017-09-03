@@ -1,7 +1,5 @@
 package core
 
-import "os"
-
 type Runner struct {
 	config        Config
 	fix           bool
@@ -18,7 +16,7 @@ func NewRunner(config Config, fix bool, changed bool) *Runner {
 	}
 }
 
-func (this Runner) Run() {
+func (this Runner) Run() bool {
 	var tasksToRun []Task
 
 	for i := 0; i < len(this.config.Tasks); i += 1 {
@@ -34,11 +32,7 @@ func (this Runner) Run() {
 		this.resultChannel,
 	).Report()
 
-	if success {
-		os.Exit(0)
-	} else {
-		os.Exit(1)
-	}
+	return success
 }
 
 func (this Runner) processTask(task Task) {

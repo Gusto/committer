@@ -61,12 +61,10 @@ func TestCompleteYaml(t *testing.T) {
 tasks:
   - name: 'SCSS Lint'
     command: yarn scss-lint
-    fix_command: yarn scss-lint-fix
-    fix_grep:
-      - Completed
-    file_extensions:
-      - .scss
-      - .css
+    fix:
+      command: yarn scss-lint-fix
+      output: Completed
+      files: '\.scss|\.css'
 `)
 
 	config, err := NewConfig(data)
@@ -93,12 +91,10 @@ func TestNamelessCommandYaml(t *testing.T) {
 tasks:
   -
     command: yarn scss-lint
-    fix_command: yarn scss-lint-fix
-    fix_grep:
-      - Completed
-    file_extensions:
-      - .scss
-      - .css
+    fix:
+      command: yarn scss-lint-fix
+      output: Completed
+      files: '\.scss|\.css'
 `)
 
 	_, err := NewConfig(data)
@@ -111,12 +107,10 @@ func TestCommandlessYaml(t *testing.T) {
 tasks:
   -
     name: 'SCSS Lint'
-    fix_command: yarn scss-lint-fix
-    fix_grep:
-      - Completed
-    file_extensions:
-      - .scss
-      - .css
+    fix:
+      command: yarn scss-lint-fix
+      output: Completed
+      files: '\.scss|\.css'
 `)
 
 	_, err := NewConfig(data)
@@ -124,16 +118,15 @@ tasks:
 	assert.NotNil(t, err, "The error should not be present.")
 }
 
-func TestWithoutFixGrepCommandYaml(t *testing.T) {
+func TestWithoutFixOutputYaml(t *testing.T) {
 	var data = []byte(`
 tasks:
   -
     name: 'SCSS Lint'
     command: yarn scss-lint
-    fix_command: yarn scss-lint-fix
-    file_extensions:
-      - .scss
-      - .css
+    fix:
+      command: yarn scss-lint-fix
+      files: '\.scss|\.css'
 `)
 
 	_, err := NewConfig(data)
@@ -141,15 +134,15 @@ tasks:
 	assert.NotNil(t, err, "The error should not be present.")
 }
 
-func TestWithoutExtensionsGrepCommandYaml(t *testing.T) {
+func TestWithoutFixFilesYaml(t *testing.T) {
 	var data = []byte(`
 tasks:
   -
     name: 'SCSS Lint'
     command: yarn scss-lint
-    fix_command: yarn scss-lint-fix
-    fix_grep:
-      - Completed
+    fix:
+      command: yarn scss-lint-fix
+      output: Completed
 `)
 
 	_, err := NewConfig(data)
