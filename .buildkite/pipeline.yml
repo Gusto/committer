@@ -4,12 +4,8 @@ steps:
     env:
       BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
       BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
-
-  - block: ':shipit: Release?'
-    branches: 'master'
-
   - label: ':package: Build & Release'
-    command: 'go install && aws s3 cp /go/bin/committer s3://zenops/packages/'
+    command: .buildkite/publish.sh
     env:
       BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
       BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
