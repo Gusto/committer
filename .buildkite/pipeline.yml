@@ -1,6 +1,6 @@
 steps:
   - label: ':hammer: Tests'
-    command: 'go test ./core'
+    command: 'godep go test ./core'
     env:
       BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
       BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
@@ -9,7 +9,7 @@ steps:
     branches: 'master'
 
   - label: ':package: Build & Release'
-    command: 'go install && aws s3 cp /go/bin/grim s3://zenops/packages/'
+    command: 'go install && aws s3 cp /go/bin/committer s3://zenops/packages/'
     env:
       BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
       BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
