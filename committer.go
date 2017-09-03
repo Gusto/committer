@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/nikhilmat/committer/core"
+	"github.com/gusto/committer/core"
 	"os"
 )
 

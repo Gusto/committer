@@ -1,10 +1,7 @@
 {
-	"ImportPath": "github.com/nikhilmat/committer",
+	"ImportPath": "github.com/gusto/committer",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
-	"Packages": [
-		"./cmd/"
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/gosuri/uilive",

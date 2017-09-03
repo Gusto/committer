@@ -1,0 +1,16 @@
+steps:
+  - label: ':hammer: Tests'
+    command: 'go test'
+    env:
+      BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
+      BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
+
+  - block: ':shipit: Release?'
+    branches: 'master'
+
+  - label: ':package: Build & Release'
+    command: 'go install && aws s3 cp /go/bin/grim s3://zenops/packages/'
+    env:
+      BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
+      BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
+    branches: 'master'
