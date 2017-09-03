@@ -1,6 +1,6 @@
 steps:
   - label: ':hammer: Tests'
-    command: 'go test'
+    command: 'go test ./core'
     env:
       BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
       BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
