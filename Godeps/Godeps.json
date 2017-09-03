@@ -1,0 +1,32 @@
+{
+	"ImportPath": "github.com/nikhilmat/committer",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./cmd/"
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/gosuri/uilive",
+			"Rev": "ac356e6e42cd31fcef8e6aec13ae9ed6fe87713e"
+		},
+		{
+			"ImportPath": "github.com/kyokomi/emoji",
+			"Comment": "v1.5-11-gddd4753",
+			"Rev": "ddd4753eac3f6480ca86b16cc6c98d26a0935d17"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.2",
+			"Rev": "fc9e8d8ef48496124e79ae0df75490096eccf6fe"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "d8f5ea21b9295e315e612b4bcf4bedea93454d4d"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+		}
+	]
+}
