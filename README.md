@@ -11,7 +11,7 @@ Committer is a parallel runner for running static analysis in a git hook. It sup
 ## Installation
 You can run the install script by executing:
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/Gusto/committer/master/install.sh)
+bash <(curl -s https://raw.githubusercontent.com/Gusto/committer/master/configure.sh)
 ```
 This will:
 - Add `committer` to `/usr/local/bin`
