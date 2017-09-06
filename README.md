@@ -9,7 +9,14 @@ Committer is a parallel runner for running static analysis in a git hook. It sup
 - Helpful display of what was changed before the commit goes through
 
 ## Installation
-Committer can be downloaded as a binary (for Mac) [here](https://s3-us-west-2.amazonaws.com/vpc-access/committer-0.1.0). Rename this to `committer` and put it somewhere in your `PATH` so it's accessible from each of your repos.
+You can run the install script by executing:
+```bash
+bash <(curl -s https://raw.githubusercontent.com/Gusto/committer/master/install.sh)
+```
+This will:
+- Add `committer` to `/usr/local/bin`
+- Create a basic `committer.yml` in your current working directory to run Rubocop
+- Setup your `.git/hooks/pre-commit` to run committer, if it is not already present
 
 You can also build it from source by cloning this repository and running `go build committer.go`.
 
