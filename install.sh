@@ -13,10 +13,10 @@ if [ ! -f $COMMITTER_LOCATION ]; then
 
   echo "Making $COMMITTER_LOCATION executable"
   chmod +x $COMMITTER_LOCATION
-
+fi
   # Write out committer.yml
-  if [ ! -f $COMMITTER_YML ]; then
-    cat > $COMMITTER_YML <<EOL
+if [ ! -f $COMMITTER_YML ]; then
+  cat > $COMMITTER_YML <<EOL
 tasks:
 - name: Rubocop
   command: bundle exec rubocop  --color --force-exclusion --format simple
@@ -25,14 +25,13 @@ tasks:
     command: bundle exec rubocop --color --force-exclusion --format simple --auto-correct
     output: '\[Corrected\]|=='
 EOL
-  fi
+fi
 
   # Setup git hook
-  if [ ! -f $GIT_PRE_COMMIT_HOOK ]; then
-    cat > $GIT_PRE_COMMIT_HOOK <<EOL
+if [ ! -f $GIT_PRE_COMMIT_HOOK ]; then
+  cat > $GIT_PRE_COMMIT_HOOK <<EOL
 #!/bin/bash
 /usr/local/bin/committer --fix --changed
 EOL
-    chmod +x $GIT_PRE_COMMIT_HOOK
-  fi
+  chmod +x $GIT_PRE_COMMIT_HOOK
 fi
