@@ -9,9 +9,11 @@ if [ "$UPLOADED_PKG_FOUND" ]; then
 else
   set -xe
 
-  go install
+  export GOARCH="amd64"
+  export GOOS="darwin"
+  go build committer.go
 
-  mv /go/bin/committer /go/bin/committer-$VERSION
+  mv committer /go/bin/committer-$VERSION
   aws s3 cp /go/bin/committer-$VERSION s3://vpc-access/
   echo "Uploaded Committer@${VERSION} to vpc-access S3 bucket!"
 fi
