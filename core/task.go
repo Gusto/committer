@@ -26,7 +26,7 @@ type TaskResult struct {
 
 var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE") == "")
 
-var changedFiles, _ = exec.Command("git", "diff", "--cached", "--name-only").Output()
+var changedFiles, _ = exec.Command("git", "diff", "--diff-filter=ACMRTUXB", "--cached", "--name-only").Output()
 var changedFilesList = strings.Split(string(changedFiles), "\n")
 
 func (task Task) relevantChangedFiles(changedFilesList []string) []string {
