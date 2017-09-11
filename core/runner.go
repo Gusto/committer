@@ -7,11 +7,10 @@ type Runner struct {
 	resultChannel chan TaskResult
 }
 
-func NewRunner(config Config, fix bool, changed bool) *Runner {
+func NewRunner(config Config, fix bool) *Runner {
 	return &Runner{
 		config:        config,
 		fix:           fix,
-		changed:       changed,
 		resultChannel: make(chan TaskResult),
 	}
 }
@@ -21,7 +20,7 @@ func (this Runner) Run() bool {
 
 	for i := 0; i < len(this.config.Tasks); i += 1 {
 		task := this.config.Tasks[i]
-		if task.shouldRun(this.changed) {
+		if task.shouldRun() {
 			tasksToRun = append(tasksToRun, task)
 			go this.processTask(task)
 		}
@@ -36,5 +35,5 @@ func (this Runner) Run() bool {
 }
 
 func (this Runner) processTask(task Task) {
-	this.resultChannel <- task.Execute(this.changed, this.fix)
+	this.resultChannel <- task.Execute(this.fix)
 }

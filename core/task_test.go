@@ -7,22 +7,13 @@ import (
 	"testing"
 )
 
-func TestShouldRunNotChanged(t *testing.T) {
-	task := Task{
-		Name:    "task",
-		Command: "run-task",
-	}
-
-	assert.True(t, task.shouldRun(false), "It runs when not in changed mode")
-}
-
 func TestShouldRunNotChangedNoFix(t *testing.T) {
 	task := Task{
 		Name:    "task",
 		Command: "run-task",
 	}
 
-	assert.False(t, task.shouldRun(true), "It does not run when in changed mode with no fix command")
+	assert.False(t, task.shouldRun(), "It does not run when in changed mode with no fix command")
 }
 
 func TestShouldRunNotChangedWithFix(t *testing.T) {
@@ -32,7 +23,7 @@ func TestShouldRunNotChangedWithFix(t *testing.T) {
 	}
 	task.Fix.Command = "run-fix"
 
-	assert.True(t, task.shouldRun(true), "It does not run when in changed mode with no fix command")
+	assert.True(t, task.shouldRun(), "It does not run when in changed mode with no fix command")
 }
 
 func TestPrepareCommandNoChangeNoFix(t *testing.T) {
@@ -43,7 +34,7 @@ func TestPrepareCommandNoChangeNoFix(t *testing.T) {
 	assert.Equal(
 		t,
 		[]string{"run-task"},
-		task.prepareCommand(false, true),
+		task.prepareCommand(true),
 		"It runs the fix command when fix is true",
 	)
 }
@@ -55,7 +46,7 @@ func TestPrepareCommandNoChangeFix(t *testing.T) {
 	assert.Equal(
 		t,
 		[]string{"run-fix"},
-		task.prepareCommand(false, true),
+		task.prepareCommand(true),
 		"It runs the fix command when fix is true",
 	)
 }
@@ -72,7 +63,7 @@ func TestPrepareCommandWithChanged(t *testing.T) {
 	assert.Equal(
 		t,
 		[]string{"run-task", "--", "three.txt"},
-		task.prepareCommand(true, false),
+		task.prepareCommand(false),
 		"It correctly passes only the relevant files",
 	)
 }
@@ -145,7 +136,7 @@ func TestExecuteSuccess(t *testing.T) {
 		Command: "run-task",
 	}
 
-	result := task.Execute(false, false)
+	result := task.Execute(false)
 	assert.True(t, result.success, "The result is successful")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Output!", "It attaches the task")
@@ -161,7 +152,7 @@ func TestExecuteFailure(t *testing.T) {
 		Command: "run-task",
 	}
 
-	result := task.Execute(false, false)
+	result := task.Execute(false)
 	assert.False(t, result.success, "The result is failed")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Output!", "It attaches the task")
@@ -177,7 +168,7 @@ func TestExecuteFixSuccessNoFixCommand(t *testing.T) {
 		Command: "run-task",
 	}
 
-	result := task.Execute(false, true)
+	result := task.Execute(true)
 	assert.True(t, result.success, "The result is successful")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Output!", "It does not grep through the output")
@@ -201,7 +192,7 @@ Linted: app/three.rb
 	task.Fix.Command = "run-fix"
 	task.Fix.Output = "Fixed:"
 
-	result := task.Execute(false, true)
+	result := task.Execute(true)
 	assert.True(t, result.success, "The result is successful")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Linted: app/one.rb\nFixed: app/two.rb\nLinted: app/three.rb\n", "It attaches the entire output")
@@ -222,7 +213,7 @@ func TestExecuteFixFailureWithFixCommand(t *testing.T) {
 	task.Fix.Command = "run-fix"
 	task.Fix.Output = "Fixed:"
 
-	result := task.Execute(false, true)
+	result := task.Execute(true)
 	assert.False(t, result.success, "The result is successful")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Failed!", "It attaches the entire output")
@@ -250,7 +241,7 @@ Linted: app/three.rb
 	task.Fix.Command = "run-fix"
 	task.Fix.Output = "Fixed:"
 
-	result := task.Execute(false, true)
+	result := task.Execute(true)
 	assert.False(t, result.success, "The result is marked unsuccessful so changes can be staged")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Linted: app/one.rb\nFixed: app/two.rb\nLinted: app/three.rb\n", "It attaches the entire output")

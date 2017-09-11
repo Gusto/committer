@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-VERSION="0.1.2"
+VERSION="0.1.3"
 GIT_PRE_COMMIT_HOOK=".git/hooks/pre-commit"
 COMMITTER_YML="committer.yml"
 COMMITTER_LOCATION="/usr/local/bin/committer"

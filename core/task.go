@@ -46,9 +46,9 @@ var execCommand = func(command string, args ...string) ([]byte, error) {
 	return exec.Command(command, args...).CombinedOutput()
 }
 
-func (task Task) Execute(changed bool, fix bool) TaskResult {
+func (task Task) Execute(fix bool) TaskResult {
 	// Generate command based on --fix / --changed
-	command := task.prepareCommand(changed, fix)
+	command := task.prepareCommand(fix)
 
 	// Run command
 	output, err := execCommand(command[0], command[1:]...)
@@ -97,7 +97,7 @@ func (task Task) prepareFixedOutput(outputStr string) string {
 	return strings.Join(fixedOutputList, "\n")
 }
 
-func (task Task) prepareCommand(changed bool, fix bool) []string {
+func (task Task) prepareCommand(fix bool) []string {
 	// Use the FixCommand or regular Command depending on the flag passed to CLI
 	var cmdStr string
 	if fix && task.Fix.Command != "" {
@@ -107,11 +107,8 @@ func (task Task) prepareCommand(changed bool, fix bool) []string {
 	}
 
 	// Feed in changed files if we are running with --changed
-
-	if changed {
-		relevantChangedFilesList := task.relevantChangedFiles(changedFilesList)
-		cmdStr += " -- " + strings.Join(relevantChangedFilesList, " ")
-	}
+	relevantChangedFilesList := task.relevantChangedFiles(changedFilesList)
+	cmdStr += " " + strings.Join(relevantChangedFilesList, " ")
 
 	return strings.Split(cmdStr, " ")
 }
@@ -125,24 +122,16 @@ func (task Task) stageRelevantFiles() {
 	}
 }
 
-func (task Task) shouldRun(changed bool) bool {
-	// Always run all tasks if we aren't just looking at changed files
-	if !changed {
-		return true
-	}
+func (task Task) shouldRun() bool {
+	for _, file := range changedFilesList {
+		match, err := regexp.MatchString(task.Files, file)
 
-	if task.Fix.Command != "" {
-		for _, file := range changedFilesList {
-			match, err := regexp.MatchString(task.Files, file)
-
-			if err != nil {
-				panic(err)
-			}
-			if match {
-				return true
-			}
+		if err != nil {
+			panic(err)
+		}
+		if match {
+			return true
 		}
 	}
-
 	return false
 }

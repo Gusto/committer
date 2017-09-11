@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$(cat VERSION)
+VERSION=$(go run committer.go --version)
 UPLOADED_PKG_FOUND=$(aws s3 --region 'us-west-2' ls 's3://vpc-access/' | grep committer-$VERSION)
 
 if [ "$UPLOADED_PKG_FOUND" ]; then
