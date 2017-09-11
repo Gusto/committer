@@ -29,7 +29,7 @@ Committer is fed a YAML file that describes how it should run. There is an examp
 There is a required top level `tasks` key, containing an array of Task objects.
 
 - `name`: Used to describe the task and provide a title for the output.
-- `command`: The command to run when executing the linter. This command should be able to receive a list of files as an argument to work in "changed" mode.
+- `command`: The command to run when executing the linter. This command should be able to receive a list of files as an argument.
 - `files`: A Regex describing the type of files that should be fed into this command.
 - `fix` (Optional)
   - `command`: The command to auto-correct violations. If this is specified, committer will attempt to fix and stage your files.
@@ -41,7 +41,7 @@ Committer is most often run as a pre-commit hook. A typical configuration would 
 
 ```bash
 #!/bin/sh
-committer --fix --changed
+committer --fix
 ```
 ## Opting out of automatic staging
 
