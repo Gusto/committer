@@ -34,7 +34,7 @@ func (task Task) relevantChangedFiles(changedFilesList []string) []string {
 
 	for _, file := range changedFilesList {
 		match, _ := regexp.MatchString(task.Files, file)
-		if match {
+		if match && file != "" {
 			relevantChangedFilesList = append(relevantChangedFilesList, file)
 		}
 	}
@@ -108,7 +108,9 @@ func (task Task) prepareCommand(fix bool) []string {
 
 	// Feed in changed files if we are running with --changed
 	relevantChangedFilesList := task.relevantChangedFiles(changedFilesList)
-	cmdStr += " " + strings.Join(relevantChangedFilesList, " ")
+	if len(relevantChangedFilesList) > 0 {
+		cmdStr += " " + strings.Join(relevantChangedFilesList, " ")
+	}
 
 	return strings.Split(cmdStr, " ")
 }

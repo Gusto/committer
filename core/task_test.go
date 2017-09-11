@@ -7,39 +7,22 @@ import (
 	"testing"
 )
 
-func TestShouldRunNotChangedNoFix(t *testing.T) {
+func TestShouldRunWithRelevantFile(t *testing.T) {
+	origChangedFiles := changedFilesList
+	changedFilesList = []string{"one.rb"}
+	defer func() { changedFilesList = origChangedFiles }()
+
 	task := Task{
 		Name:    "task",
 		Command: "run-task",
-	}
-
-	assert.False(t, task.shouldRun(), "It does not run when in changed mode with no fix command")
-}
-
-func TestShouldRunNotChangedWithFix(t *testing.T) {
-	task := Task{
-		Name:    "task",
-		Command: "run-task",
+		Files:   ".rb",
 	}
 	task.Fix.Command = "run-fix"
 
-	assert.True(t, task.shouldRun(), "It does not run when in changed mode with no fix command")
+	assert.True(t, task.shouldRun(), "It should run with relevant changed files")
 }
 
-func TestPrepareCommandNoChangeNoFix(t *testing.T) {
-	task := Task{
-		Command: "run-task",
-	}
-
-	assert.Equal(
-		t,
-		[]string{"run-task"},
-		task.prepareCommand(true),
-		"It runs the fix command when fix is true",
-	)
-}
-
-func TestPrepareCommandNoChangeFix(t *testing.T) {
+func TestPrepareCommandFix(t *testing.T) {
 	var task Task
 	task.Fix.Command = "run-fix"
 
@@ -51,7 +34,7 @@ func TestPrepareCommandNoChangeFix(t *testing.T) {
 	)
 }
 
-func TestPrepareCommandWithChanged(t *testing.T) {
+func TestPrepareCommand(t *testing.T) {
 	origChangedFiles := changedFilesList
 	changedFilesList = []string{"one.rb", "two.js", "three.txt"}
 	defer func() { changedFilesList = origChangedFiles }()
@@ -62,7 +45,7 @@ func TestPrepareCommandWithChanged(t *testing.T) {
 
 	assert.Equal(
 		t,
-		[]string{"run-task", "--", "three.txt"},
+		[]string{"run-task", "three.txt"},
 		task.prepareCommand(false),
 		"It correctly passes only the relevant files",
 	)
