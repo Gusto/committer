@@ -84,7 +84,7 @@ tasks:
 
 	_, err := NewConfig(data)
 
-	assert.NotNil(t, err, "The error should not be present.")
+	assert.NotNil(t, err, "The error should be present.")
 }
 
 func TestNamelessCommandYaml(t *testing.T) {
@@ -100,7 +100,7 @@ tasks:
 
 	_, err := NewConfig(data)
 
-	assert.NotNil(t, err, "The error should not be present.")
+	assert.NotNil(t, err, "The error should be present.")
 }
 
 func TestCommandlessYaml(t *testing.T) {
@@ -116,7 +116,7 @@ tasks:
 
 	_, err := NewConfig(data)
 
-	assert.NotNil(t, err, "The error should not be present.")
+	assert.NotNil(t, err, "The error should be present.")
 }
 
 func TestWithoutFixOutputYaml(t *testing.T) {
@@ -132,7 +132,7 @@ tasks:
 
 	_, err := NewConfig(data)
 
-	assert.NotNil(t, err, "The error should not be present.")
+	assert.NotNil(t, err, "The error should be present.")
 }
 
 func TestWithoutFixFilesYaml(t *testing.T) {
@@ -148,5 +148,5 @@ tasks:
 
 	_, err := NewConfig(data)
 
-	assert.NotNil(t, err, "The error should not be present.")
+	assert.NotNil(t, err, "The error should be present.")
 }
