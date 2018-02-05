@@ -12,8 +12,9 @@ type Task struct {
 	Command string
 	Files   string
 	Fix     struct {
-		Command string
-		Output  string
+		Command   string
+		Output    string
+		Autostage bool
 	}
 }
 
@@ -61,6 +62,9 @@ func (task Task) Execute(fix bool) TaskResult {
 	if success && shouldFix {
 		// If we are fixing and successfully updated files, capture the output
 		fixedOutput = task.prepareFixedOutput(outputStr)
+		if fixedOutput == "" && task.Fix.Autostage {
+			fixedOutput = "No output but staging since autostage is true"
+		}
 
 		if fixedOutput != "" {
 			// If we have output, then we've corrected files

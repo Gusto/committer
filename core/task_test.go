@@ -182,6 +182,43 @@ Linted: app/three.rb
 	assert.Equal(t, result.fixedOutput, "Fixed: app/two.rb", "There is a subset of the output")
 }
 
+func TestExecuteFixSuccessWithFixCommandWithNoOuput(t *testing.T) {
+	stubExecCommand([]byte(""), true)
+	defer restoreExecCommand()
+
+	task := Task{
+		Name:    "task",
+		Command: "run-task",
+	}
+	task.Fix.Command = "run-fix"
+	task.Fix.Output = "Fixed:"
+
+	result := task.Execute(true)
+	assert.True(t, result.success, "The result is successful")
+	assert.Equal(t, result.task, task, "It attaches the task")
+	assert.Equal(t, result.output, "", "There is no output")
+	assert.Equal(t, result.fixedOutput, "", "There is no output")
+}
+
+func TestExecuteFixSuccessWithFixCommandWithNoOuputWithAutostage(t *testing.T) {
+	stubExecCommand([]byte(""), true)
+	defer restoreExecCommand()
+
+	task := Task{
+		Name:    "task",
+		Command: "run-task",
+	}
+	task.Fix.Command = "run-fix"
+	task.Fix.Output = "Fixed:"
+	task.Fix.Autostage = true
+
+	result := task.Execute(true)
+	assert.True(t, result.success, "The result is successful")
+	assert.Equal(t, result.task, task, "It attaches the task")
+	assert.Equal(t, result.output, "", "There is no output")
+	assert.Equal(t, result.fixedOutput, "No output but staging since autostage is true", "There is a subset of the output")
+}
+
 func TestExecuteFixFailureWithFixCommand(t *testing.T) {
 	stubExecCommand(
 		[]byte("Failed!"),
@@ -197,7 +234,7 @@ func TestExecuteFixFailureWithFixCommand(t *testing.T) {
 	task.Fix.Output = "Fixed:"
 
 	result := task.Execute(true)
-	assert.False(t, result.success, "The result is successful")
+	assert.False(t, result.success, "The result is not successful")
 	assert.Equal(t, result.task, task, "It attaches the task")
 	assert.Equal(t, result.output, "Failed!", "It attaches the entire output")
 	assert.Equal(t, result.fixedOutput, "", "There is no fixed output")
