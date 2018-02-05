@@ -62,8 +62,11 @@ func (task Task) Execute(fix bool) TaskResult {
 	if success && shouldFix {
 		// If we are fixing and successfully updated files, capture the output
 		fixedOutput = task.prepareFixedOutput(outputStr)
+		if fixedOutput == "" && task.Fix.Autostage {
+			fixedOutput = "No output but staging since autostage is true"
+		}
 
-		if fixedOutput != "" || task.Fix.Autostage {
+		if fixedOutput != "" {
 			// If we have output, then we've corrected files
 			if shouldStage {
 				// Stage files by default automatically
