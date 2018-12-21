@@ -40,9 +40,30 @@ There is a required top level `tasks` key, containing an array of Task objects.
 Committer is most often run as a pre-commit hook. A typical configuration would be to have the following in your `.git/hooks/pre-commit` script:
 
 ```bash
-#!/bin/sh
+#!/usr/bin/env sh
 committer --fix
 ```
 ## Opting out of automatic staging
 
 Committer will stage auto-corrected files by default. In order to always leave auto-corrected files unstaged for manual staging, set `export COMMITTER_SKIP_STAGE=1` in your `~/.bashrc` or equivalent.
+
+
+## Best-practices
+### Purely Functional Pre-Commit Hooks
+Custom git pre-commit hooks should, as much as possible, be "pure functions" that simply reject / accept changes without side effects. Pre-commit hooks by default should perform no
+- Intermediate stashing
+- `git add`'ing
+- Autocorrection
+- etc
+
+The recommended workflow:
+1. `git add` your code
+2. `git commit`
+3. See the pre-commit hook failure
+4. Manually run `committer --fix`
+5. Redo `git add` and `git commit`.
+
+We originally performed autocorrection and other modification but there were a lot of random difficult-to-debug side effects that emerged. As we add more steps the possibility for interference grows n^2 (any step can potentially interfere with any other step). Moving to a "purely functional" pre-commit hook model lets us easily add additional steps.
+
+### No Composition
+Steps defined by `committer.yml` should be completely independent. Steps have no guaranteed order, and are not intended to be composable.
