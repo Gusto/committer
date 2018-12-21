@@ -40,7 +40,7 @@ There is a required top level `tasks` key, containing an array of Task objects.
 Committer is most often run as a pre-commit hook. A typical configuration would be to have the following in your `.git/hooks/pre-commit` script:
 
 ```bash
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 committer --fix
 ```
 ## Opting out of automatic staging
