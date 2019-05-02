@@ -1,5 +1,8 @@
 FROM golang:1.8
 
+RUN printf 'deb http://deb.debian.org/debian jessie main\n\
+deb http://security.debian.org/debian-security jessie/updates main' > /etc/apt/sources.list
+
 RUN go get github.com/tools/godep
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
