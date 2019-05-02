@@ -10,4 +10,4 @@ tasks:
     files: '\.js|\.jsx'
     fix:
       command: yarn eslint-fix-verbose -- --fix
-      output: 'Generating fixed text for yarn'
+      output: 'Generating fixed text'
