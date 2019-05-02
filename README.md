@@ -1,6 +1,6 @@
 # Committer
 
-Committer is a parallel runner for running static analysis in a git hook created by Gusto. It supports:
+Committer is a parallel runner for running static analysis in a git hook created. It supports:
 - Feeding in only the relevant changed files to the analysis commands
 - Running in "fix" mode, and automatically correcting files before commit
   - By default, the files will automatically be staged to be included in the commit
