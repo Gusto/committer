@@ -1,13 +1,19 @@
 steps:
   - label: ':hammer: Tests'
     command: 'godep go test ./core'
-    env:
-      BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
-      BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
+    plugins:
+      - docker-compose#v3.0.3:
+          run: app
+          shell: false
+          config:
+            - .buildkite/docker-compose.yml
   - wait
   - label: ':package: Build & Release'
     command: .buildkite/publish.sh
-    env:
-      BUILDKITE_DOCKER_COMPOSE_CONTAINER: app
-      BUILDKITE_DOCKER_COMPOSE_FILE: .buildkite/docker-compose.yml
+    plugins:
+      - docker-compose#v3.0.3:
+          run: app
+          shell: false
+          config:
+            - .buildkite/docker-compose.yml
     branches: 'master'
