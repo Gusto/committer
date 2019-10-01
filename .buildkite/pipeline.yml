@@ -14,4 +14,4 @@ steps:
           run: app
           config:
             - .buildkite/docker-compose.yml
-    # branches: 'master'
+    branches: 'master'
