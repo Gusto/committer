@@ -15,4 +15,4 @@ steps:
           shell: false
           config:
             - .buildkite/docker-compose.yml
-    branches: 'master'
+    # branches: 'master'
