@@ -12,7 +12,6 @@ steps:
     plugins:
       - docker-compose#v3.0.3:
           run: app
-          shell: false
           config:
             - .buildkite/docker-compose.yml
     # branches: 'master'
