@@ -1,9 +1,22 @@
 # Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
 # for detailed Gopkg.toml documentation.
 
+required = [
+  "github.com/golangci/golangci-lint/cmd/golangci-lint"
+]
+
 [[constraint]]
   name = "github.com/gosuri/uilive"
   version = "0.0.1"
+
+# There's a bug in golangci-lint 1.21.0 that prevents installation out of the
+# vendor directory.  Update this constraint once that's fixed.
+#
+# The project itself only supports binary releases, so all I can give you is a
+# reproducing project: https://github.com/jdkaplan/golangci-lint-issue
+[[constraint]]
+  name = "github.com/golangci/golangci-lint"
+  version = "~1.20.0"
 
 [prune]
   go-tests = true
