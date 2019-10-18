@@ -10,7 +10,6 @@ import (
 
 type Reporter struct {
 	tasks         []Task
-	results       map[string]TaskResult
 	resultChannel chan TaskResult
 	doneChannel   chan []TaskResult
 }

@@ -92,7 +92,6 @@ func TestRelevantChangedFiles(t *testing.T) {
 /*
 	task.Execute tests
 */
-type Executor func(command string, args ...string) ([]byte, error)
 
 func stubExecCommand(output []byte, success bool) {
 	execCommand = func(command string, args ...string) ([]byte, error) {

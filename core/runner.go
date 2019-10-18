@@ -3,7 +3,6 @@ package core
 type Runner struct {
 	config        Config
 	fix           bool
-	changed       bool
 	resultChannel chan TaskResult
 }
 
