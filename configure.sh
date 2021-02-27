@@ -4,7 +4,7 @@ VERSION="0.1.5"
 GIT_PRE_COMMIT_HOOK=".git/hooks/pre-commit"
 COMMITTER_YML="committer.yml"
 COMMITTER_LOCATION="/usr/local/bin/committer"
-DOWNLOAD_URL="https://github.com/Gusto/committer/releases/download/v0.0.1/committer-v$VERSION"
+DOWNLOAD_URL="https://github.com/Gusto/committer/releases/download/v$VERSION/committer-v$VERSION"
 if [ ! -f $COMMITTER_LOCATION ]; then
   echo "Committer is not installed!"
 
