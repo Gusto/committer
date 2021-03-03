@@ -9,7 +9,7 @@ if [ ! -f $COMMITTER_LOCATION ]; then
   echo "Committer is not installed!"
 
   echo "Downloading $DOWNLOAD_URL to $COMMITTER_LOCATION..."
-  curl -o $COMMITTER_LOCATION --fail $DOWNLOAD_URL
+  curl -L -o $COMMITTER_LOCATION --fail $DOWNLOAD_URL
 
   echo "Making $COMMITTER_LOCATION executable"
   chmod +x $COMMITTER_LOCATION
