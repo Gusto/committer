@@ -1,15 +1,15 @@
 #!/bin/bash -ex
 
-VERSION="0.1.4"
+VERSION="0.1.5"
 GIT_PRE_COMMIT_HOOK=".git/hooks/pre-commit"
 COMMITTER_YML="committer.yml"
 COMMITTER_LOCATION="/usr/local/bin/committer"
-DOWNLOAD_URL="https://s3-us-west-2.amazonaws.com/vpc-access/committer-$VERSION"
+DOWNLOAD_URL="https://github.com/Gusto/committer/releases/download/v$VERSION/committer-v$VERSION"
 if [ ! -f $COMMITTER_LOCATION ]; then
   echo "Committer is not installed!"
 
   echo "Downloading $DOWNLOAD_URL to $COMMITTER_LOCATION..."
-  curl -o $COMMITTER_LOCATION --fail $DOWNLOAD_URL
+  curl -L -o $COMMITTER_LOCATION --fail $DOWNLOAD_URL
 
   echo "Making $COMMITTER_LOCATION executable"
   chmod +x $COMMITTER_LOCATION
