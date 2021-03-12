@@ -41,6 +41,11 @@ jobs:
         run: |
           /bin/bash .github/build.sh
 
+      - name: Ensure verison matches
+        run: |
+          /bin/chmod +x ./committer
+          [[ "$(./committer --version)" == "$(echo '${{ steps.vars.outputs.tag }}' | /usr/bin/sed s/v//g)" ]]
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
