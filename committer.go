@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const VERSION = "0.1.4"
+const VERSION = "0.1.6"
 
 func main() {
 	version := flag.Bool("version", false, "Display version")
