@@ -65,7 +65,7 @@ func TestPrepareCommandWithExcludeFilenames(t *testing.T) {
 		t,
 		[]string{"run-task"},
 		task.prepareCommand(false),
-		"It correctly passes only the relevant files",
+		"It correctly passes no file names",
 	)
 }
 
