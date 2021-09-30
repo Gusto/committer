@@ -51,6 +51,24 @@ func TestPrepareCommand(t *testing.T) {
 	)
 }
 
+func TestPrepareCommandWithExcludeFilenames(t *testing.T) {
+	origChangedFiles := changedFilesList
+	changedFilesList = []string{"one.rb", "two.js", "three.txt"}
+	defer func() { changedFilesList = origChangedFiles }()
+
+	var task Task
+	task.Command = "run-task"
+	task.Files = ".txt"
+	task.ExcludeFilenames = true
+
+	assert.Equal(
+		t,
+		[]string{"run-task"},
+		task.prepareCommand(false),
+		"It correctly passes no file names",
+	)
+}
+
 func TestPrepareFixedOutput(t *testing.T) {
 	var task Task
 	task.Fix.Output = "Fixed:"

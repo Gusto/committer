@@ -8,10 +8,11 @@ import (
 )
 
 type Task struct {
-	Name    string
-	Command string
-	Files   string
-	Fix     struct {
+	Name             string
+	Command          string
+	Files            string
+	ExcludeFilenames bool
+	Fix              struct {
 		Command   string
 		Output    string
 		Autostage bool
@@ -112,7 +113,7 @@ func (task Task) prepareCommand(fix bool) []string {
 
 	// Feed in changed files if we are running with --changed
 	relevantChangedFilesList := task.relevantChangedFiles(changedFilesList)
-	if len(relevantChangedFilesList) > 0 {
+	if !task.ExcludeFilenames && len(relevantChangedFilesList) > 0 {
 		cmdStr += " " + strings.Join(relevantChangedFilesList, " ")
 	}
 
