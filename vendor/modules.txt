@@ -1,0 +1,26 @@
+# github.com/davecgh/go-spew v1.1.1-0.20170829195320-a47672248388
+## explicit
+github.com/davecgh/go-spew/spew
+# github.com/gosuri/uilive v0.0.1
+## explicit
+github.com/gosuri/uilive
+# github.com/kyokomi/emoji v0.0.3-0.20170519011427-ddd4753eac3f
+## explicit
+github.com/kyokomi/emoji
+# github.com/mattn/go-isatty v0.0.2
+## explicit
+github.com/mattn/go-isatty
+# github.com/pmezard/go-difflib v1.0.0
+## explicit
+github.com/pmezard/go-difflib/difflib
+# github.com/stretchr/testify v1.1.5-0.20170809224252-890a5c3458b4
+## explicit
+github.com/stretchr/testify/assert
+# golang.org/x/sys v0.0.0-20170803140359-d8f5ea21b929
+## explicit
+golang.org/x/sys/unix
+# gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+## explicit; go 1.11
+# gopkg.in/yaml.v2 v2.0.0-20170812160011-eb3733d160e7
+## explicit
+gopkg.in/yaml.v2
