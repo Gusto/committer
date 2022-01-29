@@ -11,8 +11,8 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1-0.20170829195320-a47672248388 // indirect
-	github.com/mattn/go-isatty v0.0.2 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/sys v0.0.0-20170803140359-d8f5ea21b929 // indirect
+	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
