@@ -3,7 +3,7 @@ module github.com/gusto/committer
 go 1.17
 
 require (
-	github.com/gosuri/uilive v0.0.1
+	github.com/gosuri/uilive v0.0.4
 	github.com/kyokomi/emoji v0.0.3-0.20170519011427-ddd4753eac3f
 	github.com/stretchr/testify v1.1.5-0.20170809224252-890a5c3458b4
 	gopkg.in/yaml.v2 v2.0.0-20170812160011-eb3733d160e7
