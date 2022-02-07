@@ -43,6 +43,39 @@ Committer is most often run as a pre-commit hook. A typical configuration would 
 #!/usr/bin/env bash
 committer --fix
 ```
+
+## Releasing and deploying a new committer version
+
+### Release
+
+1. Make your changes. Propose a new PR to ~~master~~ main and get approval from DEx. Force pushes to origin/main are allowed on Fridays.
+2. Once landed, add a new version tag to origin/main: `git fetch; git checkout main; git pull; git tag --annotate "vNEW.VERSION.HERE"; git push --follow-tags`
+3. .github/workflows/publish.yml will generate a new release for your tag. Follow the action in said tab.
+
+## Deploy
+
+1. Clone Gusto's chef device management remote, open the committer recipe for editing:
+```shell
+git clone git@github.com:/cpe-chef;
+cd cpe-chef;
+vi cookbooks/cpe_experiments/recipes/committer.rb
+```
+2. Set:
+```ruby
+COMMITTER_VERSION = "vNEW.VERSION.HERE"
+```
+The value may be any exact release tag which exists on committer's github remote.
+
+3. Check:
+```shell
+sudo chef-client -z -o cpe_experiments::committer
+# Some devices may need to run the full chef run list:
+sudo chef-client -z -o cpe_init
+```
+4. Push to branch. Any DEx github team member, including the filier, is ok to approve this change.
+5. Chef nodes - macOS laptops - apply latest config every 30 minutes, splayed across the fleet (if booted, not in deep sleep, and w/ internet access).
+
+
 ## Opting out of automatic staging
 
 Committer will stage auto-corrected files by default. In order to always leave auto-corrected files unstaged for manual staging, set `export COMMITTER_SKIP_STAGE=1` in your `~/.bashrc` or equivalent.
