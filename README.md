@@ -54,22 +54,7 @@ committer --fix
 
 ## Deploy
 
-1. Clone Gusto's chef device management remote. Open the committer recipe for editing:
-```shell
-vi cookbooks/cpe_experiments/recipes/committer.rb
-```
-2. Set:
-```ruby
-COMMITTER_VERSION = "vNEW.VERSION.HERE"
-```
-The value may be any exact release tag which exists on committer's github remote.
-
-3. You may manually verify new version installs. Run chef locally with:
-```shell
-sudo chef-client -z -o cpe_init
-```
-4. Push and PR. Any CODEOWNING team member is ok to approve and merge. Tests will take a few minutes.
-5. Chef nodes - macOS laptops - will apply latest config every 15-45 minutes.
+1. If you're a Gusto engineer: [go/deploy-committer-with-cpe-chef](https://go/deploy-committer-with-cpe-chef).
 
 ## Opting out of automatic staging
 
