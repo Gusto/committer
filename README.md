@@ -46,7 +46,7 @@ committer --fix
 
 ## Releasing and deploying a new committer version
 
-### Release
+#### Release
 
 1. Make your changes on a branch.
 
@@ -60,7 +60,7 @@ git push --follow-tags
 
 4. The `v` is important.
 
-## Deploy
+#### Deploy
 
 1. Gusto engineers may [go/deploy-committer-with-cpe-chef](https://go/deploy-committer-with-cpe-chef).
 
