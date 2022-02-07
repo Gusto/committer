@@ -43,6 +43,27 @@ Committer is most often run as a pre-commit hook. A typical configuration would 
 #!/usr/bin/env bash
 committer --fix
 ```
+
+## Releasing and deploying a new committer version
+
+#### Release
+
+1. Make your changes on a branch.
+
+2. Once landed in origin/main, add a new version tag to the branch:
+```shell
+git fetch && git checkout main && git pull
+git tag --annotate "vNEW.VERSION.HERE"
+git push --follow-tags
+```
+3. `.github/workflows/publish.yml` will generate a new release for your tag. Follow the action in said tab.
+
+4. The `v` is important.
+
+#### Deploy
+
+1. Gusto engineers may [go/deploy-committer-with-cpe-chef](https://go/deploy-committer-with-cpe-chef).
+
 ## Opting out of automatic staging
 
 Committer will stage auto-corrected files by default. In order to always leave auto-corrected files unstaged for manual staging, set `export COMMITTER_SKIP_STAGE=1` in your `~/.bashrc` or equivalent.
