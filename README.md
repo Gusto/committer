@@ -54,10 +54,8 @@ committer --fix
 
 ## Deploy
 
-1. Clone Gusto's chef device management remote, open the committer recipe for editing:
+1. Clone Gusto's chef device management remote. Open the committer recipe for editing:
 ```shell
-git clone git@github.com:/cpe-chef;
-cd cpe-chef;
 vi cookbooks/cpe_experiments/recipes/committer.rb
 ```
 2. Set:
@@ -66,15 +64,12 @@ COMMITTER_VERSION = "vNEW.VERSION.HERE"
 ```
 The value may be any exact release tag which exists on committer's github remote.
 
-3. Check:
+3. You may manually verify new version installs. Run chef locally with:
 ```shell
-sudo chef-client -z -o cpe_experiments::committer
-# Some devices may need to run the full chef run list:
 sudo chef-client -z -o cpe_init
 ```
-4. Push to branch. Any DEx github team member, including the filier, is ok to approve this change.
-5. Chef nodes - macOS laptops - apply latest config every 30 minutes, splayed across the fleet (if booted, not in deep sleep, and w/ internet access).
-
+4. Push and PR. Any CODEOWNING team member is ok to approve and merge. Tests will take a few minutes.
+5. Chef nodes - macOS laptops - will apply latest config every 15-45 minutes.
 
 ## Opting out of automatic staging
 
