@@ -1,7 +1,7 @@
 github.com/davecgh/go-spew v1.1.1-0.20170829195320-a47672248388 h1:c9n+0y02ovmvU9O/gS/fqw6HRlUwG645A2AJckmQVy0=
 github.com/davecgh/go-spew v1.1.1-0.20170829195320-a47672248388/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/gosuri/uilive v0.0.1 h1:zoIHF8lwKuZbNdJ38YtOJxY7tdskYNuQ2DoaxtneJ9A=
-github.com/gosuri/uilive v0.0.1/go.mod h1:qkLSc0A5EXSP6B04TrN4oQoxqFI7A8XvoXSlJi8cwk8=
+github.com/gosuri/uilive v0.0.4 h1:hUEBpQDj8D8jXgtCdBu7sWsy5sbW/5GhuO8KBwJ2jyY=
+github.com/gosuri/uilive v0.0.4/go.mod h1:V/epo5LjjlDE5RJUcqx8dbw+zc93y5Ya3yg8tfZ74VI=
 github.com/kr/pretty v0.2.1 h1:Fmg33tUaq4/8ym9TJN1x7sLJnHVwhP33CNkpYV/7rwI=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
