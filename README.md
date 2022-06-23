@@ -31,6 +31,7 @@ There is a required top level `tasks` key, containing an array of Task objects.
 - `name`: Used to describe the task and provide a title for the output.
 - `command`: The command to run when executing the linter. This command should be able to receive a list of files as an argument.
 - `files`: A Regex describing the type of files that should be fed into this command.
+- `excludefilenames`: Set this to true if the command should not receive the list of changed files (i.e. it is intended to run on the whole repo).
 - `fix` (Optional)
   - `command`: The command to auto-correct violations. If this is specified, committer will attempt to fix and stage your files.
   - `output`: A Regex to pull the relevant fixed output for display before committing.
