@@ -11,3 +11,6 @@ tasks:
     fix:
       command: yarn eslint-fix-verbose -- --fix
       output: 'Generating fixed text for yarn'
+  - name: 'Typescript'
+    command: yarn tsc --noEmit
+    files: '\.ts|\.tsx?'
