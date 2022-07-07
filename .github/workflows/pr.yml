@@ -1,0 +1,23 @@
+---
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install go
+        run: |
+          curl -L -o /tmp/go.pkg https://golang.org/dl/go1.17.darwin-amd64.pkg
+          sudo installer -pkg /tmp/go.pkg -target /
+
+      - name: Run tests
+        run: |
+          /usr/local/go/bin/go test ./core
+
+      - name: Build universal binary
+        run: |
+          /bin/bash .github/build.sh
