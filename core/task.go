@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -27,7 +28,7 @@ type TaskResult struct {
 }
 
 var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE") == "")
-var autoFix = (os.Getenv("COMMITTER_AUTO_FIX") == "")
+var autoFix, _ = strconv.ParseBool(os.Getenv("COMMITTER_AUTO_FIX"))
 
 var changedFiles, _ = exec.Command("git", "diff", "--diff-filter=ACMRTUXB", "--cached", "--name-only").Output()
 var changedFilesList = strings.Split(string(changedFiles), "\n")
@@ -51,8 +52,8 @@ var execCommand = func(command string, args ...string) ([]byte, error) {
 
 func (task Task) Execute(fix bool) TaskResult {
 	// Generate command based on --fix / --changed
-	autoFixORFix := autoFix || fix
-	command := task.prepareCommand(autoFixORFix)
+	autoFixOrFix := autoFix || fix
+	command := task.prepareCommand(autoFixOrFix)
 
 	// Run command
 	output, err := execCommand(command[0], command[1:]...)
@@ -61,7 +62,7 @@ func (task Task) Execute(fix bool) TaskResult {
 	success := err == nil
 
 	var fixedOutput string
-	shouldFix := autoFixORFix && task.Fix.Command != ""
+	shouldFix := autoFixOrFix && task.Fix.Command != ""
 	if success && shouldFix {
 		// If we are fixing and successfully updated files, capture the output
 		fixedOutput = task.prepareFixedOutput(outputStr)
