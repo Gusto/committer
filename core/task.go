@@ -27,7 +27,7 @@ type TaskResult struct {
 	fixedOutput string
 }
 
-var shouldStage = (os.Getenv("COMMITTER_SKIP_STAGE") == "")
+var shouldNotStage, _ = strconv.ParseBool(os.Getenv("COMMITTER_SKIP_STAGE"))
 var autoFix, _ = strconv.ParseBool(os.Getenv("COMMITTER_AUTO_FIX"))
 
 var changedFiles, _ = exec.Command("git", "diff", "--diff-filter=ACMRTUXB", "--cached", "--name-only").Output()
@@ -72,12 +72,12 @@ func (task Task) Execute(fix bool) TaskResult {
 
 		if fixedOutput != "" {
 			// If we have output, then we've corrected files
-			if shouldStage {
-				// Stage files by default automatically
-				task.stageRelevantFiles()
-			} else {
+			if shouldNotStage {
 				// Explicitly fail the pre-commit hook so the files can be staged manually
 				success = false
+			} else {
+				// Stage files by default automatically
+				task.stageRelevantFiles()
 			}
 		}
 	}
