@@ -1,0 +1,48 @@
+name: Publish Image
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+
+jobs:
+  build-for-os:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install go
+        run: |
+          curl -L -o /tmp/go.pkg https://golang.org/dl/go1.17.darwin-amd64.pkg
+          sudo installer -pkg /tmp/go.pkg -target /
+
+      - name: Configure version and MacOs
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install binutils just exa
+          echo "$(brew --prefix)/opt/binutils/bin" >> $GITHUB_PATH
+      - run: |
+          just test
+          just build ${{ inputs.version }}
+      - name: build pkg
+        run: |
+          just make-pkg ${{ inputs.version }}
+
+          sudo installer -pkg artifacts/committer-${{ inputs.version }}.pkg -target /
+          /opt/gusto/bin/committer --help
+          [[ "$(/opt/gusto/bin/committer --version)" == "${{ inputs.version }}" ]]
+      - name: Upload artifacts
+        env:
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          exa --tree artifacts
+          mkdir artifacts-to-publish
+          cp artifacts/committer-${{ inputs.version }}.pkg artifacts-to-publish/
+          tar -czv --strip-components 1 --no-same-owner -f artifacts-to-publish/committer-${{ inputs.version }}-darwin-amd64.tgz -C artifacts/amd64-darwin .
+          tar -czv --strip-components 1 --no-same-owner -f artifacts-to-publish/committer-${{ inputs.version }}-darwin-arm64.tgz -C artifacts/arm64-darwin .
+          tar -czv --strip-components 1 --no-same-owner -f artifacts-to-publish/committer-${{ inputs.version }}-darwin-multi-arch.tgz -C artifacts/multi-arch-darwin .
+          gh release upload ${{ inputs.version }} artifacts-to-publish/*

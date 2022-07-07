@@ -47,23 +47,7 @@ committer --fix
 
 ## Releasing and deploying a new committer version
 
-#### Release
-
-1. Make your changes on a branch.
-
-2. Once landed in origin/main, add a new version tag to the branch:
-```shell
-git fetch && git checkout main && git pull
-git tag --annotate "vNEW.VERSION.HERE"
-git push --follow-tags
-```
-3. `.github/workflows/publish.yml` will generate a new release for your tag. Follow the action in said tab.
-
-4. The `v` is important.
-
-#### Deploy
-
-1. Gusto engineers may [go/deploy-committer-with-cpe-chef](https://go/deploy-committer-with-cpe-chef).
+Merges to main will automatically deploy to user machines in a gradual rollout over a week.
 
 ## Opting out of automatic staging
 
@@ -89,3 +73,15 @@ We originally performed autocorrection and other modification but there were a l
 
 ### No Composition
 Steps defined by `committer.yml` should be completely independent. Steps have no guaranteed order, and are not intended to be composable.
+
+## Building
+
+Install [`just`](https://github.com/casey/just) (`brew install just`) and run
+
+```
+just test
+just build
+just build-all-targets
+```
+
+These commands will build all artifacts produced by the repo.
