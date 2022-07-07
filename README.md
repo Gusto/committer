@@ -65,15 +65,14 @@ git push --follow-tags
 
 1. Gusto engineers may [go/deploy-committer-with-cpe-chef](https://go/deploy-committer-with-cpe-chef).
 
-## Autofix
+## Environment Specific Configuration
 
-Committer can auto-fix everything by default. set `export COMMITTER_AUTO_FIX=true # or 1, T, t` in your
-`~/.profile` or equivalent dotfile.
+Set these values in your `~/.profile` or equivalent env vars `export <flag>=<value>`
 
-## Opting out of automatic staging
-
-Committer will stage auto-corrected files by default. In order to always leave auto-corrected files unstaged for manual staging, set `export COMMITTER_SKIP_STAGE=1` in your `~/.bashrc` or equivalent.
-
+| Flag | Default | Expected | Description |
+|---|---|---|---|
+| COMMITTER_SKIP_STAGE | False | Truthy or Falsy | Committer will stage auto-corrected files by default. In order to always leave auto-corrected files unstaged for manual staging, set this value |
+| COMMITTER_AUTO_FIX | False | Truthy or Falsy | Committer can auto-fix code formatting in staged files by default |
 
 ## Best-practices
 ### Purely Functional Pre-Commit Hooks
