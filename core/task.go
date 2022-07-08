@@ -73,10 +73,10 @@ func (task Task) Execute(fix bool) TaskResult {
 		if fixedOutput != "" {
 			// If we have output, then we've corrected files
 			if shouldNotStage {
-				// Explicitly fail the pre-commit hook so the files can be staged manually
+				// Fail the pre-commit hook so the files can be staged manually
 				success = false
 			} else {
-				// Stage files by default automatically
+				// Stage files automatically otherwise.
 				task.stageRelevantFiles()
 			}
 		}
