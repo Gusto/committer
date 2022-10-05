@@ -50,16 +50,16 @@ committer --fix
 #### Release
 
 1. Make your changes on a branch.
-
-2. Once landed in origin/main, add a new version tag to the branch:
+2. Update `VERSION` in `committer.go` to new version number.
+3. Once landed in origin/main, add a new version tag to the branch:
 ```shell
 git fetch && git checkout main && git pull
 git tag --annotate "vNEW.VERSION.HERE"
 git push --follow-tags
 ```
-3. `.github/workflows/publish.yml` will generate a new release for your tag. Follow the action in said tab.
+4. `.github/workflows/publish.yml` will generate a new release for your tag. Follow the action in said tab.
 
-4. The `v` is important.
+5. The `v` is important.
 
 #### Deploy
 
