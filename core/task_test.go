@@ -259,9 +259,9 @@ func TestExecuteFixFailureWithFixCommand(t *testing.T) {
 }
 
 func TestExecuteFixSuccessWithFixCommandShouldNotStage(t *testing.T) {
-	origShouldStage := shouldStage
-	shouldStage = false
-	defer func() { shouldStage = origShouldStage }()
+	origShouldStage := shouldNotStage
+	shouldNotStage = true
+	defer func() { shouldNotStage = origShouldStage }()
 
 	stubExecCommand(
 		[]byte(`Linted: app/one.rb
