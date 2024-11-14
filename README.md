@@ -1,3 +1,9 @@
+# ================= DEPRECATED =================
+
+### Gusto has standardized on using [Lefthook](https://github.com/evilmartians/lefthook) to manage git hooks.
+
+# ================= DEPRECATED =================
+
 # Committer
 
 Committer is a parallel runner for running static analysis in a git hook created. It supports:
